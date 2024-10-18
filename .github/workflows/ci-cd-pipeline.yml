@@ -32,7 +32,7 @@ jobs:
       run: docker push blacorpheus/reverse-ip-app:latest
 
   deploy:
-    runs-on: ubuntu-latest   # Correct indentation heree
+    runs-on: ubuntu-latest   # Correct indentation here
     needs: build
     steps:
     - name: Configure AWS credentials
