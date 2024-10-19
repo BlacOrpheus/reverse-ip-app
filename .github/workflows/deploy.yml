@@ -55,7 +55,7 @@ jobs:
           helm repo update
 
       - name: List files in working directory
-        run: ls -R ./reverse-ip-app
+        run: ls -R .charts/reverse-ip-app
 
       - name: Deploy with Helm
-        run: helm install reverse-ip-app ./reverse-ip-app
+        run: helm install reverse-ip-app .charts/reverse-ip-app
