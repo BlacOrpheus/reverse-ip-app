@@ -76,6 +76,7 @@ jobs:
     - name: Deploy with Helm
       run: |
         helm upgrade --install reverse-ip-app ./reverse-ip-app
+      working-directory: ./reverse-ip-app
         
-        
+
 
