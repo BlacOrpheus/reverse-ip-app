@@ -31,10 +31,10 @@ jobs:
     - name: Push Docker image
       run: docker push blacorpheus/reverse-ip-app:latest
 
-  deploy:
-    runs-on: ubuntu-latest   # Correct indentation here
-    needs: build
-    steps:
+  #deploy:
+    #runs-on: ubuntu-latest   # Correct indentation here
+    #needs: build
+    #steps:
     - name: Set up Kubernetes
       uses: azure/setup-kubectl@v1
       
@@ -57,7 +57,7 @@ jobs:
         helm repo update
 
     - name: List files in working directory
-      run: ls -R ./charts/reverse-ip-app
+      run: ls -R ./reverse-ip-app
 
 
     - name: Deploy with Helm
