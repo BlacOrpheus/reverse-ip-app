@@ -62,11 +62,11 @@ jobs:
     #- name: Display Kubeconfig
      # run: cat ~/.kube/config
 
-    #- name: Test Kubernetes Access
+    #- name: Test Kubernetes Accesss
      # run: kubectl get nodes
 
     - name: Deploy to EKS using Helm
       run: |
-        helm install nodeapp ./node-app
+        helm install reverse-ip-app ./reverse-ip-app
 
 
