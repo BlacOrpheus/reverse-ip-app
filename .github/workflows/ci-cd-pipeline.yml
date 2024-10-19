@@ -68,9 +68,14 @@ jobs:
     #- name: Test Kubernetes Accesss
      # run: kubectl get nodes.
 
-    - name: Deploy to EKS using Helm
+    - name: Add Helm repo
       run: |
-        helm install reverse-ip-app ./reverse-ip-app
+        helm repo add stable https://charts.helm.sh/stable
+        helm repo update
+
+    - name: Deploy with Helm
+      run: |
+        helm upgrade --install reverse-ip-app ./reverse-ip-app
         
         
 
