@@ -59,11 +59,11 @@ jobs:
       run: |
         aws eks update-kubeconfig --name eks-project --region us-east-1
 
-    - name: Display Kubeconfig
-      run: cat ~/.kube/config
+    #- name: Display Kubeconfig
+     # run: cat ~/.kube/config
 
-    - name: Test Kubernetes Access
-      run: kubectl get nodes
+    #- name: Test Kubernetes Access
+     # run: kubectl get nodes
 
     - name: Deploy to EKS using Helm
       run: |
