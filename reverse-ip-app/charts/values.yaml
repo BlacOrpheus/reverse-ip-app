@@ -37,6 +37,13 @@ securityContext: {}
 service:
   type: ClusterIP
   port: 80
+  targetPort: 3000
+  protocol: TCP
+  name: reverse-ip-app
+  #service:
+  #type: LoadBalancer
+  #port: 80
+  
 
 ingress:
   enabled: false
