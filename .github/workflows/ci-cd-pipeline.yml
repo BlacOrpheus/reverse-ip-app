@@ -56,8 +56,12 @@ jobs:
         helm repo add stable https://charts.helm.sh/stable
         helm repo update
 
+    - name: List files in working directory
+      run: ls -R ./charts/reverse-ip-app
+
+
     - name: Deploy with Helm
       run: helm install reverse-ip-app ./reverse-ip-app
-      working-directory: /Users/chidubem/downloads/reverse-ip-app/reverse-ip-app
+      #working-directory: /Users/chidubem/downloads/reverse-ip-app/reverse-ip-app
 
 
