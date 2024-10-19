@@ -59,7 +59,7 @@ jobs:
           helm repo update
 
       - name: List files in working directory
-        run: ls -la
+        run: ls -la reverse-ip-app 
 
       - name: Deploy with Helm
-        run: helm install reverse-ip-app ./charts
+        run: helm install reverse-ip-app ./reverse-ip-app/charts 
