@@ -76,17 +76,17 @@ jobs:
         
 
 
-        - name: Set up kubectl
-        run: |
-          aws eks update-kubeconfig --name your-cluster-name
+    - name: Set up kubectl
+      run: |
+        aws eks update-kubeconfig --name your-cluster-name
 
-      - name: Add Helm repo
-        run: |
-          helm repo add stable https://charts.helm.sh/stable
-          helm repo update
+    - name: Add Helm repo
+      run: |
+        helm repo add stable https://charts.helm.sh/stable
+        helm repo update
 
-      - name: Deploy with Helm
-        run: |
-          helm upgrade --install reverse-ip-app ./reverse-ip-app
+    - name: Deploy with Helm
+      run: |
+        helm upgrade --install reverse-ip-app ./reverse-ip-app
 
 
