@@ -1,0 +1,61 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Proper indentation
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Docker image
+        run: |
+          docker build -t blacorpheus/reverse-ip-app:latest .
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Push Docker image
+        run: docker push blacorpheus/reverse-ip-app:latest
+
+  deploy:
+    runs-on: ubuntu-latest  # Proper indentation
+    needs: build
+    steps:
+      - name: Set up Kubernetes
+        uses: azure/setup-kubectl@v1
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1 
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --name reverse-id --region us-east-1
+
+      - name: Add Helm repo
+        run: |
+          helm repo add stable https://charts.helm.sh/stable
+          helm repo update
+
+      - name: List files in working directory
+        run: ls -R ./reverse-ip-app
+
+      - name: Deploy with Helm
+        run: helm install reverse-ip-app ./reverse-ip-app
