@@ -46,8 +46,8 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1 
-        role-to-assume: arn:aws:iam::884434650011:role/eks-project
-        role-session-name: GitHubActionsEKS
+        #role-to-assume: arn:aws:iam::884434650011:role/eks-project
+        #role-session-name: GitHubActionsEKS
 
     #- name: Install kubectl
      # run: |
