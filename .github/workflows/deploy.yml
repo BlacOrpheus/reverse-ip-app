@@ -35,6 +35,10 @@ jobs:
     runs-on: ubuntu-latest  # Proper indentation
     needs: build
     steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Set up Kubernetes
         uses: azure/setup-kubectl@v1
 
@@ -55,7 +59,7 @@ jobs:
           helm repo update
 
       - name: List files in working directory
-        run: ls -R .
+        run: ls -la
 
       - name: Deploy with Helm
         run: helm install reverse-ip-app ./charts
