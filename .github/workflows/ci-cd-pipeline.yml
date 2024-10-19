@@ -70,6 +70,8 @@ jobs:
 
     - name: Deploy to EKS using Helm
       run: |
-        helm install reverse-ip-app ./reverse-ip-app
+        helm repo add stable https://charts.helm.sh/stable
+        helm repo update
+        helm upgrade --install reverse-ip-app ./reverse-ip-app
 
 
