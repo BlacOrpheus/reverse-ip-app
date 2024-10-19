@@ -60,7 +60,7 @@ jobs:
 
     - name: Update kubeconfig
       run: |
-        aws eks update-kubeconfig --name eks-project --region us-east-1
+        aws eks update-kubeconfig --name reverse-id --region us-east-1
 
     #- name: Display Kubeconfig
      # run: cat ~/.kube/config
