@@ -58,6 +58,6 @@ jobs:
 
     - name: Deploy with Helm
       run: helm install reverse-ip-app ./reverse-ip-app
-      working-directory: /home/runner/work/reverse-ip-app/reverse-ip-app
+      working-directory: /Users/chidubem/downloads/reverse-ip-app/reverse-ip-app
 
 
