@@ -62,4 +62,4 @@ jobs:
         run: ls -la reverse-ip-app 
 
       - name: Deploy with Helm
-        run: helm install reverse-ip-app ./reverse-ip-app/charts 
+        run: helm install reverse-ip-app ./reverse-ip-app/charts
