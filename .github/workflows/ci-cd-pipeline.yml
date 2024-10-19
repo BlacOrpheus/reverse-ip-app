@@ -45,12 +45,18 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1 
+        
 
     - name: Update kubeconfig
       run: |
         aws eks update-kubeconfig --name reverse-id --region us-east-1
 
-    
+    - name: Add Helm repo
+      run: |
+        helm repo add stable https://charts.helm.sh/stable
+        helm repo update
+
+
     - name: Deploy with Helm
-      run: helm upgrade --install reverse-ip-app .
-      working-directory: ./charts/reverse-ip-app
+      run: helm upgrade --install reverse-ip-app ./reverse-ip-app
+      
