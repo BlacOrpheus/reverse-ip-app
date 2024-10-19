@@ -35,6 +35,11 @@ jobs:
     runs-on: ubuntu-latest   # Correct indentation here
     needs: build
     steps:
+    - name: Set up Kubernetes
+      uses: azure/setup-kubectl@v1
+      with:
+        version: 'latest'
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -44,11 +49,11 @@ jobs:
         role-to-assume: arn:aws:iam::884434650011:role/eks-project
         role-session-name: GitHubActionsEKS
 
-    - name: Install kubectl
-      run: |
-        curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
-        chmod +x ./kubectl
-        sudo mv ./kubectl /usr/local/bin/
+    #- name: Install kubectl
+     # run: |
+      #  curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
+       # chmod +x ./kubectl
+        #sudo mv ./kubectl /usr/local/bin/
 
     - name: Update kubeconfig
       run: |
@@ -65,4 +70,5 @@ jobs:
         helm repo add stable https://charts.helm.sh/stable
         helm repo update
         helm upgrade --install reverse-ip-app ./reverse-ip-app
+
 
