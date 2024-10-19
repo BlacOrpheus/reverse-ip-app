@@ -57,7 +57,7 @@ jobs:
         helm repo update
 
     - name: Deploy with Helm
-      run: helm install reverse-ip-app /Users/chidubem/downloads/reverse-ip-app/reverse-ip-app
-      
+      run: helm install reverse-ip-app ./reverse-ip-app
+      working-directory: /home/runner/work/reverse-ip-app/reverse-ip-app
 
 
