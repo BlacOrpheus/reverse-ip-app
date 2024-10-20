@@ -61,9 +61,11 @@ jobs:
       - name: List files in working directory
         run: ls -la reverse-ip-app 
 
-      - name: Deploy with Helm
-        run: helm install reverse-ip-app ./reverse-ip-app/charts
+      - name: Upgrade Helm
+        run: helm upgrade reverse-ip-app ./reverse-ip-app/charts
 
-      - name: Deploy with Helm
-        run: kubectl get svc
+      #- name: Deploy with Helm
+       # run: helm install reverse-ip-app ./reverse-ip-app/charts
+
+      
 
