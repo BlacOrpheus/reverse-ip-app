@@ -59,7 +59,7 @@ securityContext: {}
 service:
   type: LoadBalancer
   port: 80
-  targetPort: 8080
+  targetPort: 3000
   protocol: TCP
   name: reverse-ip-app
 
