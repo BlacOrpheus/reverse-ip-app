@@ -85,7 +85,7 @@ jobs:
       - name: Upgrade Helm
         run: helm upgrade reverse-ip-app ./reverse-ip-app/charts
 
-      - name: Get alb
+      - name: Get load balancer
         run: kubectl get svc
 
 
