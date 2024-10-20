@@ -63,3 +63,7 @@ jobs:
 
       - name: Deploy with Helm
         run: helm install reverse-ip-app ./reverse-ip-app/charts
+
+      - name: Deploy with Helm
+        run: kubectl get svc
+

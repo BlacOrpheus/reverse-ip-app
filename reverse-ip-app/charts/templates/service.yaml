@@ -3,13 +3,11 @@ kind: Service
 metadata:
   name: {{ include "reverse-ip-app.fullname" . }}
   labels:
-    {{- include "reverse-ip-app.labels" . | nindent 4 }}
+    app: {{ include "reverse-ip-app.name" . }}
 spec:
-  type: {{ .Values.service.type }}
+  type: LoadBalancer  # This will create an AWS LoadBalancer
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
+    - port: 80
+      targetPort: 80
   selector:
-    {{- include "reverse-ip-app.selectorLabels" . | nindent 4 }}
+    app: {{ include "reverse-ip-app.name" . }}
