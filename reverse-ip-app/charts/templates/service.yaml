@@ -8,7 +8,7 @@ spec:
   type: LoadBalancer  # This will create an AWS LoadBalancer
   ports:
     - port: 80
-      targetPort: 80
+      targetPort: {{ .Values.service.targetPort }}
   selector:
     app: {{ include "reverse-ip-app.name" . }}
 
