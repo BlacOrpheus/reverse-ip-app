@@ -62,6 +62,7 @@ service:
   targetPort: 3000
   protocol: TCP
   name: reverse-ip-app
+  
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
