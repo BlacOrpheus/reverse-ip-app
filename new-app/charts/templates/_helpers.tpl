@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "reverse-ip-app.name" -}}
+{{- define "new-app.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "reverse-ip-app.fullname" -}}
+{{- define "new-app.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "reverse-ip-app.chart" -}}
+{{- define "new-app.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "reverse-ip-app.labels" -}}
-helm.sh/chart: {{ include "reverse-ip-app.chart" . }}
-{{ include "reverse-ip-app.selectorLabels" . }}
+{{- define "new-app.labels" -}}
+helm.sh/chart: {{ include "new-app.chart" . }}
+{{ include "new-app.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "reverse-ip-app.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "reverse-ip-app.name" . }}
+{{- define "new-app.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "new-app.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "reverse-ip-app.serviceAccountName" -}}
+{{- define "new-app.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "reverse-ip-app.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "new-app.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
