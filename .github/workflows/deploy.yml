@@ -25,6 +25,12 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
+    - name: Run app
+      run: node server.js
+      env:
+        MONGODB_URI: ${{ secrets.MONGODB_URI }}
+
+
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1

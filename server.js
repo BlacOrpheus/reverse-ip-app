@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const { MongoClient } = require('mongodb');
+require('dotenv').config();
 
 const app = express();
 const port = 3000;
@@ -16,7 +17,7 @@ app.get('/', (req, res) => {
 });
 
 // MongoDB connection URI
-const uri = 'mongodb+srv://chidubemchinwuba01:w7NIcgKCKyxQ896I@reverse-ip1.zywnr.mongodb.net/?retryWrites=true&w=majority&appName=reverse-ip1';
+const uri = process.env.MONGODB_URI;
 
 // Create a MongoDB client
 const client = new MongoClient(uri);
@@ -37,6 +38,8 @@ connectToDatabase();
 // Route to get and reverse the client's IP
 app.get('/get-reverse-ip', async (req, res) => {
   let clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  console.log(req.headers);
+
 
   // Handle IPv6 format, which may start with '::ffff:'
   if (clientIp.includes('::ffff:')) {
