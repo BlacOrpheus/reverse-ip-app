@@ -38,32 +38,28 @@ connectToDatabase();
 // Route to get and reverse the client's IP
 app.get('/get-reverse-ip', async (req, res) => {
   let clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  console.log('Client IP:', clientIp);
 
-  // Handle IPv6 format, which may start with '::ffff:'
   if (clientIp.includes('::ffff:')) {
-    clientIp = clientIp.split('::ffff:')[1]; // Extract IPv4 part
+    clientIp = clientIp.split('::ffff:')[1];  // Extract IPv4 part
   }
 
   try {
     const db = client.db('ipDatabase');
     const collection = db.collection('ipAddresses');
 
-    // Check if the IP exists in the database
     let ipData = await collection.findOne({ ip: clientIp });
-
-    // If IP doesn't exist, insert it into the database
     if (!ipData) {
       await collection.insertOne({ ip: clientIp });
       ipData = { ip: clientIp };
     }
 
-    // Reverse the IP address
     const reversedIp = ipData.ip.split('.').reverse().join('.');
     res.json({ reversedIp });
 
   } catch (error) {
     console.error('Error processing IP:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Internal server error: ' + error.message });
   }
 });
 
