@@ -1,95 +1,54 @@
 name: CI/CD Pipeline
-
 on:
   push:
-    branches:
+    branches: 
       - main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Build, tag, and push Docker image to Amazon ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: reverse-id-app
-          IMAGE_TAG: latest
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-
-      #- name: Build Docker image
-        #run: |
-         # docker build -t blacorpheus/reverse-ip-app:latest .
-
-      #- name: Login to Docker Hub
-        #run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-      #- name: Push Docker image
-       # run: docker push blacorpheus/reverse-ip-app:latest
-
   deploy:
-    runs-on: ubuntu-latest  # Proper indentation
-    needs: build
+    runs-on: ubuntu-latest
+    
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Install kubectl
+      uses: azure/setup-kubectl@v2.0
+      with:
+        version: 'v1.27.0'
+      id: install
 
-      - name: Set up Kubernetes
-        uses: azure/setup-kubectl@v1
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1 
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Update kubeconfig
-        run: |
-          aws eks update-kubeconfig --name reverse-id --region us-east-1
+    - name: Build, tag, and push docker image to Amazon ECR
+      env:
+        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        REPOSITORY: devops
+        IMAGE_TAG: latest
+      run: |
+        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+        docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
-      - name: Add Helm repo
-        run: |
-          helm repo add stable https://charts.helm.sh/stable
-          helm repo update
+    - name: Update kube config
+      run: aws eks update-kubeconfig --name demo-ekscluster2
 
-      #- name: List files in working directory
-        #run: ls -la reverse-ip-app 
+    #- name: Deploy nodejs helm chart to EKS
+      #run: |
+       # helm install sage-app1 ./sage-app1/charts
 
-      #- name: Upgrade Helm
-      # run: helm upgrade reverse-ip-app ./reverse-ip-app/charts
+    - name: Upgrade Helm
+      run: helm upgrade sage-app2 ./sage-app2/charts
 
-      - name: Get load balancer
-        run: kubectl get svc
+    
 
-      - name: Deploy with Helm
-        run: helm install new-app ./new-app/charts
 
-      
-
+    
