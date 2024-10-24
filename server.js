@@ -2,20 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const { MongoClient } = require('mongodb');
-const mongoose = require('mongoose');
-
-mongoose.connect('mongodb+srv://chidubemchinwuba01:w7NIcgKCKyxQ896I@reverse-ip.zywnr.mongodb.net/?retryWrites=true&w=majority&appName=reverse-ip', { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('MongoDB connected...'))
-  .catch(err => console.log('Failed to connect to MongoDB:', err));
-
 
 const app = express();
 const port = 3000;
 
 // Middleware
 app.use(cors());
-
-// Serve static files from the 'public' folder
 app.use(express.static(path.join(__dirname)));
 
 // Root route to serve the HTML file
@@ -24,12 +16,32 @@ app.get('/', (req, res) => {
 });
 
 // MongoDB connection URI
+const uri = 'mongodb+srv://chidubemchinwuba01:w7NIcgKCKyxQ896I@reverse-ip1.zywnr.mongodb.net/?retryWrites=true&w=majority&appName=reverse-ip1';
 
+// Create a MongoDB client
+const client = new MongoClient(uri);
+
+// Connect to MongoDB
+async function connectToDatabase() {
+  try {
+    await client.connect();
+    console.log("Successfully connected to MongoDB");
+  } catch (err) {
+    console.error("Failed to connect to MongoDB:", err);
+  }
+}
+
+// Call the function to connect
+connectToDatabase();
 
 // Route to get and reverse the client's IP
 app.get('/get-reverse-ip', async (req, res) => {
   let clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
+  // Handle IPv6 format, which may start with '::ffff:'
+  if (clientIp.includes('::ffff:')) {
+    clientIp = clientIp.split('::ffff:')[1];  // Extract IPv4 part
+  }
 
   try {
     const db = client.db('ipDatabase');
@@ -54,10 +66,8 @@ app.get('/get-reverse-ip', async (req, res) => {
   }
 });
 
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
-
-
-
