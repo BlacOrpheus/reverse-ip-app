@@ -19,6 +19,12 @@ app.get('/', (req, res) => {
 // MongoDB connection URI
 const uri = process.env.MONGODB_URI;
 
+// Check if the URI is defined
+if (!uri || (!uri.startsWith('mongodb://') && !uri.startsWith('mongodb+srv://'))) {
+  console.error('Invalid MongoDB URI');
+  process.exit(1);
+}
+
 // Create a MongoDB client
 const client = new MongoClient(uri);
 
