@@ -2,9 +2,15 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const { MongoClient } = require('mongodb');
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb+srv://chidubemchinwuba01:w7NIcgKCKyxQ896I@reverse-ip.zywnr.mongodb.net/?retryWrites=true&w=majority&appName=reverse-ip', { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected...'))
+  .catch(err => console.log('Failed to connect to MongoDB:', err));
+
 
 const app = express();
-const port = 3000;
+const port = 5000;
 
 // Middleware
 app.use(cors());
@@ -18,29 +24,12 @@ app.get('/', (req, res) => {
 });
 
 // MongoDB connection URI
-const uri = 'mongodb://admin:password123@localhost:27017/ipDatabase?authSource=admin';
 
-// Create a MongoDB client outside of the request handler for reuse
-const client = new MongoClient(uri);
-
-(async () => {
-  try {
-    // Establish the MongoDB connection once at startup
-    await client.connect();
-    console.log('Connected to MongoDB');
-  } catch (error) {
-    console.error('Failed to connect to MongoDB:', error);
-  }
-})();
 
 // Route to get and reverse the client's IP
 app.get('/get-reverse-ip', async (req, res) => {
   let clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-  // Convert ::1 (IPv6 loopback) to 127.0.0.1 (IPv4 loopback)
-  if (clientIp === '::1') {
-    clientIp = '127.0.0.1';
-  }
 
   try {
     const db = client.db('ipDatabase');
@@ -69,3 +58,6 @@ app.get('/get-reverse-ip', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+
+
