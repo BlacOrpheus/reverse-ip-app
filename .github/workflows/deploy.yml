@@ -46,7 +46,7 @@ jobs:
        # helm install sage-app1 ./sage-app1/charts
 
     - name: Upgrade Helm
-      run: helm upgrade sage-app2 ./sage-app2/charts
+      run: helm upgrade reverse-ip-app ./reverse-ip-app/charts
 
     
 
