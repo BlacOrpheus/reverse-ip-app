@@ -10,7 +10,7 @@ mongoose.connect('mongodb+srv://chidubemchinwuba01:w7NIcgKCKyxQ896I@reverse-ip.z
 
 
 const app = express();
-const port = 5000;
+const port = 3000;
 
 // Middleware
 app.use(cors());
