@@ -8,7 +8,10 @@ const app = express();
 const port = 3000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: '*', // Adjust the origin as necessary
+  methods: ['GET', 'POST'],
+}));;
 app.use(express.static(path.join(__dirname)));
 
 // Serve the HTML file
@@ -37,7 +40,7 @@ connectToDatabase();
 
 // Route to get and reverse the client's IP
 app.get('/get-reverse-ip', async (req, res) => {
-  let clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  let clientIp = req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'].split(',')[0] : req.connection.remoteAddress;
   console.log('Client IP:', clientIp);
 
   if (clientIp.includes('::ffff:')) {
