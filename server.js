@@ -11,22 +11,13 @@ const port = 3000;
 app.use(cors());
 app.use(express.static(path.join(__dirname)));
 
-// Set trust proxy to true (required for handling 'x-forwarded-for' header)
-app.set('trust proxy', true);
-
-// Root route to serve the HTML file
+// Serve the HTML file
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // MongoDB connection URI
 const uri = process.env.MONGODB_URI;
-
-// Check if the URI is defined
-if (!uri || (!uri.startsWith('mongodb://') && !uri.startsWith('mongodb+srv://'))) {
-  console.error('Invalid MongoDB URI');
-  process.exit(1);
-}
 
 // Create a MongoDB client
 const client = new MongoClient(uri);
@@ -47,11 +38,10 @@ connectToDatabase();
 // Route to get and reverse the client's IP
 app.get('/get-reverse-ip', async (req, res) => {
   let clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  console.log(req.headers);
 
   // Handle IPv6 format, which may start with '::ffff:'
   if (clientIp.includes('::ffff:')) {
-    clientIp = clientIp.split('::ffff:')[1];  // Extract IPv4 part
+    clientIp = clientIp.split('::ffff:')[1]; // Extract IPv4 part
   }
 
   try {
