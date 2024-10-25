@@ -11,7 +11,14 @@ image:
   # This sets the pull policy for images.
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: latest
+
+mongodb:
+  uri: mongodb+srv://chidubemchinwuba01:w7NIcgKCKyxQ896I@reverse-ip1.zywnr.mongodb.net/?retryWrites=true&w=majority&appName=reverse-ip1;
+  # Replace with your actual MongoDB URI or use secrets
+
+
+
 
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []

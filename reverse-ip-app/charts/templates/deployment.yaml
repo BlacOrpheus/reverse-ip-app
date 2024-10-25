@@ -40,6 +40,9 @@ spec:
             - name: http
               containerPort: {{ .Values.service.targetPort }}
               protocol: TCP
+          env:
+            - name: MONGODB_URI
+              value: {{ .Values.mongodb.uri }}  # MongoDB URI from 
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
