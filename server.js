@@ -7,7 +7,7 @@ const path = require('path');
 const app = express();
 
 // MongoDB connection URI
-const uri = 'mongodb+srv://chidubemchinwuba01:w7NIcgKCKyxQ896I@reverse-ip.zywnr.mongodb.net/reverse-ip?retryWrites=true&w=majority';
+const uri = 'mongodb+srv://chidubemchinwuba01:w7NIcgKCKyxQ896I@reverse-ip1.zywnr.mongodb.net/?retryWrites=true&w=majority&appName=reverse-ip1';
 
 // Create a new MongoClient
 const client = new MongoClient(uri);
