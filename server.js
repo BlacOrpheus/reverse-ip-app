@@ -1,5 +1,5 @@
 const express = require('express');
-const cors = require('cors');
+//const cors = require('cors');
 const path = require('path');
 const { MongoClient } = require('mongodb');
 require('dotenv').config();
@@ -8,7 +8,7 @@ const app = express();
 const port = 3000;
 
 // Middleware
-app.use(cors());
+//app.use(cors());
 app.use(express.static(path.join(__dirname)));
 
 // Root route to serve the HTML file
