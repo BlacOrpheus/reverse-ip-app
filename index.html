@@ -3,17 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reverse IP Address</title>
+    <title>Reverse Your IP Address Checker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             padding-top: 50px;
-        }
-
-        #reverseIp {
-            margin-top: 20px;
-            font-size: 1.5rem;
         }
 
         button {
@@ -32,30 +27,25 @@
 </head>
 <body>
 
-    <h1>Reverse IP Address Checker</h1>
-  <button id="reverseIpBtn">Click to See Your Reverse IP Address</button>
-  <p id="reverseIpDisplay"></p>
+    <h1>Reverse Your IP Address Checker</h1>
+    <button id="reverseIpBtn">Click to Store and Reverse Your IP</button>
+    <p id="reverseIpDisplay"></p>
 
-  <script>
-    document.getElementById('reverseIpBtn').addEventListener('click', async () => {
-      try {
-        // Update the fetch URL to point to your load balancer URL
-        const response = await fetch('http://aabcf827a0a84496285a56c29e139191-1652671828.us-east-1.elb.amazonaws.com/get-reverse-ip');
-        const data = await response.json();
-  
-        if (response.ok) {
-          document.getElementById('reverseIpDisplay').textContent = `Your reversed IP is: ${data.reversedIp}`;
-        } else {
-          document.getElementById('reverseIpDisplay').textContent = `Error: ${data.error}`;
-        }
-      } catch (error) {
-        document.getElementById('reverseIpDisplay').textContent = 'An error occurred while fetching your IP.';
-      }
-    });
-  </script>
-  
+    <script>
+        document.getElementById('reverseIpBtn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/get-reverse-ip');
+                const data = await response.json();
+                if (response.ok) {
+                    document.getElementById('reverseIpDisplay').textContent = `Your reversed IP is: ${data.reversedIp}`;
+                } else {
+                    document.getElementById('reverseIpDisplay').textContent = `Error: ${data.error}`;
+                }
+            } catch (error) {
+                document.getElementById('reverseIpDisplay').textContent = 'An error occurred while fetching your IP.';
+            }
+        });
+    </script>
 
 </body>
 </html>
-
-
