@@ -43,36 +43,56 @@ connectToDatabase();
 
 // Route to get and reverse the client's IP
 app.get('/get-reverse-ip', async (req, res) => {
-  let clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  console.log(req.headers);
+ try {
+    // retrieve ip address
+const response = await fetch('https://api.ipify.org?format=json') 
+const data = await response.json()
+
+if(!data.ip)return
 
 
-  // Handle IPv6 format, which may start with '::ffff:'
-  if (clientIp.includes('::ffff:')) {
-    clientIp = clientIp.split('::ffff:')[1];  // Extract IPv4 part
-  }
+//perform reversal
+const reversedIp = data.ip.split('.').reverse().join('.');
 
-  try {
-    const db = client.db('ipDatabase');
-    const collection = db.collection('ipAddresses');
+//update database
+const db = client.db('ipDatabase');
+const collection = db.collection('ipAddresses');
+await collection.insertOne({ ip: reversedIp });
+res.status(200).json({data:{reversedIp}})
+// Check if the IP exists in the database
+//let ipData = await collection.findOne({ ip: clientIp });
 
-    // Check if the IP exists in the database
-    let ipData = await collection.findOne({ ip: clientIp });
+// If IP doesn't exist, insert it into the database
+//if (!ipData) {
+  //await collection.insertOne({ ip: clientIp });
+ // ipData = { ip: clientIp };
+//}
 
-    // If IP doesn't exist, insert it into the database
-    if (!ipData) {
-      await collection.insertOne({ ip: clientIp });
-      ipData = { ip: clientIp };
-    }
+//respond with reversed ip
 
-    // Reverse the IP address
-    const reversedIp = ipData.ip.split('.').reverse().join('.');
-    res.json({ reversedIp });
 
-  } catch (error) {
-    console.error('Error processing IP:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
+ } catch (error) {
+    res.status(500).json({message:error})
+ }
+
+
+  
+
+//   // Construct the public URL
+//   const publicUrl = `${req.protocol}://${clientIp}:${port}/get-reverse-ip`;
+//   console.log(`Public URL of the client: ${publicUrl}`);
+
+//   try {
+   
+
+//     // Reverse the IP address
+    
+//     res.json({ reversedIp });
+
+//   } catch (error) {
+//     console.error('Error processing IP:', error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
 });
 
 

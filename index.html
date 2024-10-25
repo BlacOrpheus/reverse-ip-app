@@ -37,7 +37,7 @@
                 const response = await fetch('/get-reverse-ip');
                 const data = await response.json();
                 if (response.ok) {
-                    document.getElementById('reverseIpDisplay').textContent = `Your reversed IP is: ${data.reversedIp}`;
+                    document.getElementById('reverseIpDisplay').textContent = `Your reversed IP is: ${data.data.reversedIp}`;
                 } else {
                     document.getElementById('reverseIpDisplay').textContent = `Error: ${data.error}`;
                 }
