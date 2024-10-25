@@ -23,7 +23,7 @@ async function run() {
         app.use(express.json());
 
         // Serve the static HTML file
-        app.use(express.static(path.join(__dirname, 'public'))); // Assumes your frontend HTML is in the "public" folder
+        app.use(express.static(path.join(__dirname, 'index.html'))); // Assumes your frontend HTML is in the "public" folder
 
         // Route to get and reverse the user's IP
         app.get('/get-reverse-ip', async (req, res) => {
@@ -39,7 +39,7 @@ async function run() {
 
             try {
                 // Store the original and reversed IP in MongoDB
-                const database = client.db('reverse-ip'); // Use your database name here
+                const database = client.db('reverse-ip1'); // Use your database name here
                 const collection = database.collection('ipAddresses');
                 const newIp = { ip: userIp, reversedIp };
 
