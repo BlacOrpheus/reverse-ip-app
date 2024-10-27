@@ -9,12 +9,13 @@ const port = 3000;
 
 // Middleware
 //app.use(cors());
+app.use(express.json())
 app.use(express.static(path.join(__dirname)));
 
 
 // Root route to serve the HTML file
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 
@@ -24,8 +25,8 @@ const uri = process.env.MONGODB_URI;
 
 // Check if the URI is defined
 if (!uri || (!uri.startsWith('mongodb://') && !uri.startsWith('mongodb+srv://'))) {
-    console.error('Invalid MongoDB URI');
-    process.exit(1);
+  console.error('Invalid MongoDB URI');
+  process.exit(1);
 }
 
 // Create a MongoDB client
@@ -33,12 +34,12 @@ const client = new MongoClient(uri);
 
 // Connect to MongoDB
 async function connectToDatabase() {
-    try {
-        await client.connect();
-        console.log("Successfully connected to MongoDB");
-    } catch (err) {
-        console.error("Failed to connect to MongoDB:", err);
-    }
+  try {
+    await client.connect();
+    console.log("Successfully connected to MongoDB");
+  } catch (err) {
+    console.error("Failed to connect to MongoDB:", err);
+  }
 }
 
 // Call the function to connect
@@ -47,47 +48,46 @@ connectToDatabase();
 // Route to get and reverse the client's IP
 
 
-app.get('/get-reverse-ip', async (req, res) => {
-    try {
+app.post('/get-reverse-ip', async (req, res) => {
+  try {
+    console.log(req.body)
+    const { ip } = req.body
     console.log("receive request to reverse ip")
-        // retrieve ip address
-        const response = await fetch('https://api.ipify.org?format=json')
-        const data = await response.json()
-        console.log("response from ip", data)
+    // retrieve ip address
 
-        if (!data.ip) {
+    if (!ip) {
 
-          console.log("ip missing a response")
+      console.log("ip missing a response")
 
-          return res.status(200).json({ data: { reversedIp } })
+      return res.status(404).json()
 
 
-        }
-
-
-        //perform reversal
-        const reversedIp = data.ip.split('.').reverse().join('.');
-        console.log("successfully reversed ip", reversedIp)
-
-        //update database
-        const db = client.db('ipDatabase');
-        const collection = db.collection('ipAddresses');
-        await collection.insertOne({ ip: reversedIp });
-        res.status(200).json({ data: { reversedIp } })
-
-
-
-    } catch (error) {
-      console.log(error)
-        res.status(500).json({ message: error })
     }
+
+
+    //perform reversal
+    const reversedIp = ip.split('.').reverse().join('.');
+    console.log("successfully reversed ip", reversedIp)
+
+    //update database
+    const db = client.db('ipDatabase');
+    const collection = db.collection('ipAddresses');
+    await collection.insertOne({ ip: reversedIp });
+    res.status(200).json({ data: { reversedIp } })
+
+
+
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: error })
+  }
 
 });
 
 
 // Start the server
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+  console.log(`Server running on port ${port}`);
 });
 
 

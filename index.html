@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,6 +26,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <h1>Reverse Your IP Address Checker</h1>
@@ -34,8 +36,18 @@
     <script>
         document.getElementById('reverseIpBtn').addEventListener('click', async () => {
             try {
-                const response = await fetch('/get-reverse-ip');
-                const data = await response.json();
+                const ipResponse = await fetch('https://api.ipify.org?format=json')
+                const { ip } = await ipResponse.json()
+
+                const response = await fetch('/get-reverse-ip', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ ip })
+                })
+                const data = await response.json()
+
                 if (response.ok) {
                     document.getElementById('reverseIpDisplay').textContent = `Your reversed IP is: ${data.data.reversedIp}`;
                 } else {
@@ -48,4 +60,5 @@
     </script>
 
 </body>
+
 </html>
