@@ -46,55 +46,32 @@ connectToDatabase();
 
 // Route to get and reverse the client's IP
 
-
-// Route to get and reverse the client's IP
+  
 app.get('/get-reverse-ip', async (req, res) => {
-    try {
-      // Retrieve the client's IP address from the X-Forwarded-For header
-      const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-      console.log("Client IP:", clientIp);
-  
-      // Reverse the client's IP
-      const reversedIp = clientIp.split('.').reverse().join('.');
-  
-      // Update the database with the reversed client IP
-      const db = client.db('ipDatabase');
-      const collection = db.collection('ipAddresses');
-      await collection.insertOne({ ip: reversedIp });
-  
-      // Respond with the reversed IP
-      res.status(200).json({ data: { reversedIp } });
-  
-    } catch (error) {
-      res.status(500).json({ message: error });
-    }
-  });
-  
-// app.get('/get-reverse-ip', async (req, res) => {
-// try {
-//     // retrieve ip address
-// const response = await fetch('https://api.ipify.org?format=json') 
-// const data = await response.json()
+try {
+    // retrieve ip address
+const response = await fetch('https://api.ipify.org?format=json') 
+const data = await response.json()
 
-// if(!data.ip)return
+if(!data.ip)return
 
 
-// //perform reversal
-// const reversedIp = data.ip.split('.').reverse().join('.');
+//perform reversal
+const reversedIp = data.ip.split('.').reverse().join('.');
 
-// //update database
-// const db = client.db('ipDatabase');
-// const collection = db.collection('ipAddresses');
-// await collection.insertOne({ ip: reversedIp });
-// res.status(200).json({data:{reversedIp}})
+//update database
+const db = client.db('ipDatabase');
+const collection = db.collection('ipAddresses');
+await collection.insertOne({ ip: reversedIp });
+res.status(200).json({data:{reversedIp}})
 
 
 
-//  } catch (error) {
-//     res.status(500).json({message:error})
-//  }
+ } catch (error) {
+    res.status(500).json({message:error})
+ }
 
-// });
+});
 
 
 // Start the server
