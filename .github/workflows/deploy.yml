@@ -42,4 +42,5 @@ jobs:
 
     - name: Upgrade Helm
       run: |
-        helm upgrade reverse-ip-app ./reverse-ip-app/charts --set mongodb.uri=${{ secrets.MONGODB_URI }}
+        helm upgrade reverse-ip-app ./reverse-ip-app/charts
+     #   helm upgrade reverse-ip-app ./reverse-ip-app/charts --set mongodb.uri=${{ secrets.MONGODB_URI }}
