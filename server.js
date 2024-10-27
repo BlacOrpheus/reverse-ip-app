@@ -11,10 +11,13 @@ const port = 3000;
 //app.use(cors());
 app.use(express.static(path.join(__dirname)));
 
+
 // Root route to serve the HTML file
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
+
+
 
 // MongoDB connection URI
 const uri = process.env.MONGODB_URI;
@@ -42,58 +45,56 @@ async function connectToDatabase() {
 connectToDatabase();
 
 // Route to get and reverse the client's IP
+
+
+// Route to get and reverse the client's IP
 app.get('/get-reverse-ip', async (req, res) => {
- try {
-    // retrieve ip address
-const response = await fetch('https://api.ipify.org?format=json') 
-const data = await response.json()
-
-if(!data.ip)return
-
-
-//perform reversal
-const reversedIp = data.ip.split('.').reverse().join('.');
-
-//update database
-const db = client.db('ipDatabase');
-const collection = db.collection('ipAddresses');
-await collection.insertOne({ ip: reversedIp });
-res.status(200).json({data:{reversedIp}})
-// Check if the IP exists in the database
-//let ipData = await collection.findOne({ ip: clientIp });
-
-// If IP doesn't exist, insert it into the database
-//if (!ipData) {
-  //await collection.insertOne({ ip: clientIp });
- // ipData = { ip: clientIp };
-//}
-
-//respond with reversed ip
-
-
- } catch (error) {
-    res.status(500).json({message:error})
- }
-
-
+    try {
+      // Retrieve the client's IP address from the X-Forwarded-For header
+      const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+      console.log("Client IP:", clientIp);
   
+      // Reverse the client's IP
+      const reversedIp = clientIp.split('.').reverse().join('.');
+  
+      // Update the database with the reversed client IP
+      const db = client.db('ipDatabase');
+      const collection = db.collection('ipAddresses');
+      await collection.insertOne({ ip: reversedIp });
+  
+      // Respond with the reversed IP
+      res.status(200).json({ data: { reversedIp } });
+  
+    } catch (error) {
+      res.status(500).json({ message: error });
+    }
+  });
+  
+// app.get('/get-reverse-ip', async (req, res) => {
+// try {
+//     // retrieve ip address
+// const response = await fetch('https://api.ipify.org?format=json') 
+// const data = await response.json()
 
-//   // Construct the public URL
-//   const publicUrl = `${req.protocol}://${clientIp}:${port}/get-reverse-ip`;
-//   console.log(`Public URL of the client: ${publicUrl}`);
+// if(!data.ip)return
 
-//   try {
-   
 
-//     // Reverse the IP address
-    
-//     res.json({ reversedIp });
+// //perform reversal
+// const reversedIp = data.ip.split('.').reverse().join('.');
 
-//   } catch (error) {
-//     console.error('Error processing IP:', error);
-//     res.status(500).json({ error: 'Internal server error' });
-//   }
-});
+// //update database
+// const db = client.db('ipDatabase');
+// const collection = db.collection('ipAddresses');
+// await collection.insertOne({ ip: reversedIp });
+// res.status(200).json({data:{reversedIp}})
+
+
+
+//  } catch (error) {
+//     res.status(500).json({message:error})
+//  }
+
+// });
 
 
 // Start the server
