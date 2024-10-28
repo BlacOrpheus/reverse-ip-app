@@ -14,10 +14,12 @@ app.get('/', (req, res) => {
 });
 
 const uri = process.env.MONGODB_URI;
+ 
 
 if (!uri || (!uri.startsWith('mongodb://') && !uri.startsWith('mongodb+srv://'))) {
   process.exit(1);
 }
+
 
 const client = new MongoClient(uri);
 
@@ -42,9 +44,15 @@ app.post('/get-reverse-ip', async (req, res) => {
     }
 
     const reversedIp = ip.split('.').reverse().join('.');
-    await collection.insertOne({ ip: reversedIp });
+    const existingIp = await collection.findOne({ ip: reversedIp });
 
-    res.status(200).json({ data: { reversedIp } })
+    if (existingIp) {
+      res.status(200).json({ message: 'IP already exists in the database', data: { reversedIp } });
+    } else {
+      await collection.insertOne({ ip: reversedIp });
+      res.status(200).json({ message: 'Reversed IP inserted successfully', data: { reversedIp } });
+    }
+
   } catch (error) {
     res.status(500).json({ message: error })
   }
