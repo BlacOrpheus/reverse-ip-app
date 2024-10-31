@@ -33,25 +33,26 @@
     <button id="reverseIpBtn">Click to Store and Reverse Your IP</button>
     <p id="reverseIpDisplay"></p>
 
+
     <script>
         document.getElementById('reverseIpBtn').addEventListener('click', async () => {
             try {
-                const ipResponse = await fetch('https://api.ipify.org?format=json')
-                const { ip } = await ipResponse.json()
-
+                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const { ip } = await ipResponse.json();
                 const response = await fetch('/get-reverse-ip', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ ip })
-                })
-                const data = await response.json()
+                });
+
+                const data = await response.json();
 
                 if (response.ok) {
-                    document.getElementById('reverseIpDisplay').textContent = `Your reversed IP is: ${data.data.reversedIp}`;
+                    document.getElementById('reverseIpDisplay').textContent = `Message: ${data.message}, Reversed IP: ${data.data.reversedIp}`;
                 } else {
-                    document.getElementById('reverseIpDisplay').textContent = `Error: ${data.error}`;
+                    document.getElementById('reverseIpDisplay').textContent = `Message: ${data.message}`;
                 }
             } catch (error) {
                 document.getElementById('reverseIpDisplay').textContent = 'An error occurred while fetching your IP.';
