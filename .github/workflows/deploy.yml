@@ -38,7 +38,7 @@ jobs:
         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
     - name: Update kube config
-      run: aws eks update-kubeconfig --name demo-ekscluster2
+      run: aws eks update-kubeconfig --name reverse-ip
 
     - name: Upgrade Helm
       run: |
