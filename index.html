@@ -35,10 +35,14 @@
 
 
     <script>
+        // Add an event listener to the button with ID 'reverseIpBtn'
         document.getElementById('reverseIpBtn').addEventListener('click', async () => {
             try {
+                // Fetch the public IP address
                 const ipResponse = await fetch('https://api.ipify.org?format=json');
                 const { ip } = await ipResponse.json();
+
+                // Send the IP address to the server for processing
                 const response = await fetch('/get-reverse-ip', {
                     method: 'POST',
                     headers: {
@@ -47,14 +51,19 @@
                     body: JSON.stringify({ ip })
                 });
 
+                // Parse the JSON response from the server
                 const data = await response.json();
 
+                // Check if the response was successful
                 if (response.ok) {
+                    // Display success message for inserted IP
                     document.getElementById('reverseIpDisplay').textContent = `Message: ${data.message}, Reversed IP: ${data.data.reversedIp}`;
                 } else {
+                    // Display message for existing IP
                     document.getElementById('reverseIpDisplay').textContent = `Message: ${data.message}`;
                 }
             } catch (error) {
+                // Handle any errors that occur during fetching
                 document.getElementById('reverseIpDisplay').textContent = 'An error occurred while fetching your IP.';
             }
         });
