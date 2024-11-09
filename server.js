@@ -6,88 +6,74 @@ require('dotenv').config();
 const app = express();
 const port = 3000;
 
-app.use(express.json())
+app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
-
-// Define a GET endpoint at the root URL '/'
-app.get('/', (req, res) => {
-  // Send the 'index.html' file located in the same directory as this script
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// Retrieve the MongoDB connection URI from environment variables
+// MongoDB URI from environment variables
 const uri = process.env.MONGODB_URI;
 
-// Check if the URI is defined and starts with valid MongoDB prefixes
-if (!uri || (!uri.startsWith('mongodb://') && !uri.startsWith('mongodb+srv://'))) {
-  // If not valid, exit the process with a failure code
+// Ensure URI is defined and valid
+if (!uri) {
+  console.error('MongoDB URI is not defined in the environment variables.');
   process.exit(1);
 }
 
-// Create a new MongoClient instance with the provided URI
-const client = new MongoClient(uri);
+// Create a MongoClient instance
+const client = new MongoClient(uri, { useUnifiedTopology: true });
 
-// Function to connect to the MongoDB database
 async function connectToDatabase() {
   try {
-    // Attempt to connect to the database
     await client.connect();
-    console.log("Successfully connected to MongoDB");
+    console.log('Successfully connected to MongoDB');
   } catch (err) {
-    // Log an error message if the connection fails
-    console.error("Failed to connect to MongoDB", err);
+    console.error('Failed to connect to MongoDB', err);
+    process.exit(1);
   }
 }
 
-// Call the function to initiate the database connection
+// Connect to the database on startup
 connectToDatabase();
 
-// Define a POST endpoint at '/get-reverse-ip'
+// Serve the index.html file
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Handle the reverse IP logic and interaction with MongoDB
 app.post('/get-reverse-ip', async (req, res) => {
   try {
-    // Extract the 'ip' property from the request body
-    const { ip } = req.body;
+    // Get the client IP from the request headers (X-Forwarded-For via NGINX ingress)
+    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
-    // Access the 'ipDatabase' database
-    const db = client.db('ipDatabase');
-    // Access the 'ipAddresses' collection within the database
-    const collection = db.collection('ipAddresses');
-
-    // Check if the 'ip' is provided in the request body
-    if (!ip) {
-      // If not provided, respond with a 404 status and no content
-      return res.status(404).json();
+    if (!clientIp) {
+      return res.status(400).json({ message: 'Unable to retrieve client IP address' });
     }
 
-    // Reverse the IP address by splitting it into parts, reversing the array, and joining it back into a string
-    const reversedIp = ip.split('.').reverse().join('.');
-    
+    // Reverse the IP
+    const reversedIp = clientIp.split('.').reverse().join('.');
+
+    // Access the MongoDB collection
+    const db = client.db('ipDatabase');
+    const collection = db.collection('ipAddresses');
+
     // Check if the reversed IP already exists in the database
     const existingIp = await collection.findOne({ ip: reversedIp });
 
-    // If the reversed IP already exists, respond with a message indicating so
     if (existingIp) {
-      res.status(200).json({ message: 'IP already exists in the database', data: { reversedIp } });
-      //console.log({message})
-    } else {
-      // If it does not exist, insert the reversed IP into the collection
-      await collection.insertOne({ ip: reversedIp });
-      // Respond with a success message indicating that the IP was inserted
-      res.status(200).json({ message: 'Reversed IP inserted successfully', data: { reversedIp } });
-      //console.log({message})
+      return res.status(200).json({ message: 'IP already exists in the database', data: { reversedIp } });
     }
 
+    // Insert new reversed IP if not found
+    await collection.insertOne({ ip: reversedIp });
+    return res.status(201).json({ message: 'Reversed IP inserted successfully', data: { reversedIp } });
+
   } catch (error) {
-    // If an error occurs during processing, respond with a 500 status and the error message
-    res.status(500).json({ message: error });
+    console.error('Error processing IP address', error);
+    res.status(500).json({ message: 'Internal server error', error });
   }
 });
 
+// Start the server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
-
-
-
-
