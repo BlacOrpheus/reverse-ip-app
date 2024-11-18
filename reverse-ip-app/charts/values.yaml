@@ -14,7 +14,7 @@ image:
   tag: latest
 
 mongodb:
-  uri: mongodb+srv://chidubemchinwuba01:w7NIcgKCKyxQ896I@reverse-ip1.zywnr.mongodb.net/?retryWrites=true&w=majority&appName=reverse-ip1;
+  uri: process.env.MONGODB_URI;
   # Replace with your actual MongoDB URI or use secrets
 
 
