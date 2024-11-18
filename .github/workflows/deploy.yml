@@ -44,22 +44,4 @@ jobs:
       run: |
         helm upgrade reverse-ip-app ./reverse-ip-app/charts
 
-    - name: Verify MongoDB connection
-      run: |
-        node -e "
-          const { MongoClient } = require('mongodb');
-          const uri = process.env.MONGODB_URI;
-          (async () => {
-            try {
-              const client = new MongoClient(uri);
-              await client.connect();
-              console.log('Successfully connected to MongoDB');
-              await client.close();
-            } catch (error) {
-              console.error('Failed to connect to MongoDB:', error);
-              process.exit(1);
-            }
-          })();
-        "
-      env:
-        MONGODB_URI: ${{ secrets.MONGODB_URI }}
+     

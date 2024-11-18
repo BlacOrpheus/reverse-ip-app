@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const { MongoClient } = require('mongodb');
 require('dotenv').config();
+const fetch = require('node-fetch');  // Ensure you're using the correct fetch for Node.js
 
 const app = express();
 const port = 3000;
@@ -43,11 +44,31 @@ app.get('/', (req, res) => {
 app.post('/get-reverse-ip', async (req, res) => {
   try {
     // Get the client IP from the request headers (X-Forwarded-For via NGINX ingress)
-    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    let clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+
+    // In case of X-Forwarded-For, it might contain multiple IPs, use the first one
+    if (clientIp.includes(',')) {
+      clientIp = clientIp.split(',')[0];
+    }
 
     if (!clientIp) {
       return res.status(400).json({ message: 'Unable to retrieve client IP address' });
     }
+
+    // Skip local IPs for external geolocation services
+    if (clientIp === '::1' || clientIp === '127.0.0.1') {
+      return res.status(400).json({ message: 'Localhost IP cannot be processed' });
+    }
+
+    // Call the geolocation API (using ipinfo.io as an example)
+    const response = await fetch(`https://ipinfo.io/${clientIp}?token=0e2a068a459bc6`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch location data from ipinfo.io');
+    }
+
+    const locationData = await response.json();
+    console.log(locationData);
 
     // Reverse the IP
     const reversedIp = clientIp.split('.').reverse().join('.');
@@ -60,16 +81,16 @@ app.post('/get-reverse-ip', async (req, res) => {
     const existingIp = await collection.findOne({ ip: reversedIp });
 
     if (existingIp) {
-      return res.status(200).json({ message: 'IP already exists in the database', data: { reversedIp } });
+      return res.status(200).json({ message: 'IP already exists in the database', data: { reversedIp, locationData } });
     }
 
     // Insert new reversed IP if not found
     await collection.insertOne({ ip: reversedIp });
-    return res.status(201).json({ message: 'Reversed IP inserted successfully', data: { reversedIp } });
+    return res.status(201).json({ message: 'Reversed IP inserted successfully', data: { reversedIp, locationData } });
 
   } catch (error) {
     console.error('Error processing IP address', error);
-    res.status(500).json({ message: 'Internal server error', error });
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 });
 
